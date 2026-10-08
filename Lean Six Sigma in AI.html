@@ -1,0 +1,590 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Lean Six Sigma 4.0</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Source+Sans+3:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --page:#E4E9EE; --bg:#F5F7F9; --panel:#FFFFFF; --ink:#13263B; --muted:#55687B; --line:#C9D4DE;
+  --teal:#0C7473; --teal-soft:#D7EDEB; --amber:#9A5F00; --amber-soft:#FBE8BE; --red:#B03A26; --red-soft:#F7DAD3;
+  --head:"Bricolage Grotesque","Trebuchet MS",Arial,sans-serif;
+  --body:"Source Sans 3","Segoe UI",Helvetica,Arial,sans-serif;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --page:#0A131C; --bg:#0F1B28; --panel:#162636; --ink:#E8EEF4; --muted:#9AAABA; --line:#2B3C4E;
+    --teal:#4CC2BE; --teal-soft:#12383A; --amber:#F0B840; --amber-soft:#3B2E10; --red:#F08A76; --red-soft:#3D1D17;
+  }
+}
+:root[data-theme="dark"]{
+  --page:#0A131C; --bg:#0F1B28; --panel:#162636; --ink:#E8EEF4; --muted:#9AAABA; --line:#2B3C4E;
+  --teal:#4CC2BE; --teal-soft:#12383A; --amber:#F0B840; --amber-soft:#3B2E10; --red:#F08A76; --red-soft:#3D1D17;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{background:var(--page);color:var(--ink);font-family:var(--body);display:flex;flex-direction:column;overflow:hidden}
+
+#viewport{flex:1;min-height:0;display:flex;align-items:center;justify-content:center;padding:12px}
+#frame{position:relative;overflow:hidden;border-radius:6px;box-shadow:0 1px 0 var(--line)}
+#stage{position:absolute;left:0;top:0;width:1280px;height:720px;background:var(--bg);transform-origin:0 0}
+
+.slide{position:absolute;inset:0;padding:56px 72px 64px;display:none;flex-direction:column}
+.slide.active{display:flex}
+.mod{font-size:19px;font-weight:600;color:var(--teal);margin-bottom:10px}
+h1{font-family:var(--head);font-weight:800;font-size:92px;line-height:.98;letter-spacing:-.025em}
+h2{font-family:var(--head);font-weight:700;font-size:46px;line-height:1.08;letter-spacing:-.015em;margin-bottom:26px;max-width:1000px}
+h3{font-family:var(--head);font-weight:700;font-size:25px;line-height:1.2;margin-bottom:8px}
+p,li{font-size:23px;line-height:1.4}
+ul{list-style:none}
+.muted{color:var(--muted)}
+.lead{font-size:28px;line-height:1.35;max-width:900px}
+.quote{border-left:5px solid var(--teal);padding:4px 0 4px 22px;font-size:24px;line-height:1.4;font-style:italic;max-width:980px}
+.grow{flex:1}
+.row{display:flex;gap:28px}
+.col{flex:1;min-width:0}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:28px 40px}
+.g3{display:grid;grid-template-columns:repeat(3,1fr);gap:24px}
+.g4{display:grid;grid-template-columns:repeat(4,1fr);gap:20px}
+.g5{display:grid;grid-template-columns:repeat(5,1fr);gap:16px}
+.box{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:20px 22px}
+.box.teal{background:var(--teal-soft);border-color:transparent}
+.box.amber{background:var(--amber-soft);border-color:transparent}
+.box.red{background:var(--red-soft);border-color:transparent}
+.dots li{position:relative;padding-left:26px;margin-bottom:7px}
+.dots li::before{content:"";position:absolute;left:3px;top:.62em;width:9px;height:9px;border-radius:50%;background:var(--teal)}
+.tight li{font-size:21px;margin-bottom:5px}
+
+/* chips and flows */
+.chip{display:inline-block;background:var(--panel);border:1px solid var(--line);border-radius:999px;padding:6px 16px;font-size:20px;margin:0 8px 10px 0}
+.flow{display:flex;align-items:center;flex-wrap:wrap;gap:8px 6px}
+.step{background:var(--panel);border:1.5px solid var(--teal);color:var(--ink);border-radius:8px;padding:9px 14px;font-size:20px;font-weight:500;line-height:1.15}
+.step.wait{background:var(--amber-soft);border:1.5px dashed var(--amber);color:var(--amber)}
+.step.bad{background:var(--red-soft);border-color:var(--red);color:var(--red)}
+.step.solid{background:var(--teal);color:var(--bg);border-color:var(--teal)}
+.arr{color:var(--muted);font-size:20px;padding:0 1px}
+.flowlabel{font-family:var(--head);font-weight:700;font-size:22px;margin:0 0 8px}
+
+/* table */
+table{border-collapse:collapse;width:100%}
+th,td{text-align:left;font-size:21px;padding:9px 14px;border-bottom:1px solid var(--line)}
+th{font-family:var(--head);font-weight:700;color:var(--muted);font-size:19px}
+td.va{color:var(--teal);font-weight:600}
+td.nva{color:var(--red);font-weight:600}
+
+/* big letters */
+.letter{font-family:var(--head);font-weight:800;font-size:64px;line-height:1;color:var(--teal)}
+.tile{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:16px 18px}
+.tile .nm{font-family:var(--head);font-weight:700;font-size:24px}
+.eq{font-family:var(--head);font-weight:700;font-size:34px;line-height:1.25}
+.eq em{font-style:normal;color:var(--teal)}
+.tag{display:inline-block;font-size:18px;font-weight:600;border-radius:6px;padding:3px 10px;margin-right:8px}
+.tag.va{background:var(--teal-soft);color:var(--teal)}
+.tag.nn{background:var(--amber-soft);color:var(--amber)}
+.tag.pw{background:var(--red-soft);color:var(--red)}
+
+/* roles */
+.bar{height:50px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-family:var(--head);font-weight:700;font-size:21px;margin:0 auto 8px;background:var(--teal);color:var(--bg)}
+
+/* controls */
+#bar{flex:none;display:flex;align-items:center;gap:14px;padding:8px 18px 10px;border-top:1px solid var(--line);background:var(--bg)}
+#bar button{font:600 15px var(--body);color:var(--ink);background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:7px 14px;cursor:pointer}
+#bar button:hover{border-color:var(--teal)}
+#bar button:focus-visible,#jump:focus-visible{outline:3px solid var(--teal);outline-offset:2px}
+#prog{flex:1;height:6px;background:var(--line);border-radius:3px;overflow:hidden}
+#prog i{display:block;height:100%;width:0;background:var(--teal);transition:width .2s}
+#count{font:600 15px var(--body);color:var(--muted);min-width:56px;text-align:center}
+#notes{flex:none;display:none;padding:12px 22px 14px;border-top:1px solid var(--line);background:var(--panel);font-size:16px;line-height:1.45;max-height:22vh;overflow:auto}
+#notes.on{display:block}
+#notes b{font-family:var(--head)}
+@media (prefers-reduced-motion:reduce){#prog i{transition:none}}
+</style>
+</head>
+<body>
+<div id="viewport"><div id="frame"><div id="stage">
+
+<!-- 1 -->
+<section class="slide active" data-notes="The objective is not only to learn Lean Six Sigma tools, but to learn how to identify problems, remove waste, improve processes, and create measurable business value.">
+  <div class="grow" style="display:flex;flex-direction:column;justify-content:center">
+    <h1>Lean Six Sigma 4.0</h1>
+    <p class="lead muted" style="margin:18px 0 36px">Building a Continuous Improvement Mindset</p>
+    <div class="g4" style="max-width:1080px">
+      <div class="box"><p style="font-size:20px">Introduction to Lean Management</p></div>
+      <div class="box"><p style="font-size:20px">Six Sigma and Data Analytics</p></div>
+      <div class="box"><p style="font-size:20px">AI-enabled Continuous Improvement</p></div>
+      <div class="box"><p style="font-size:20px">Kaizen and Project Execution</p></div>
+    </div>
+  </div>
+  <p class="quote" style="font-size:22px">Learn how to identify problems, remove waste, improve processes, and create measurable business value.</p>
+</section>
+
+<!-- 2 -->
+<section class="slide" data-notes="The main objective is to understand how Lean and Six Sigma can be applied to real business problems. I want to focus not only on theory, but also on how we can use these principles in our daily work.">
+  <h2>Course objectives</h2>
+  <p class="muted" style="margin:-10px 0 20px">By the end of this course, participants should be able to:</p>
+  <ul class="dots g2" style="gap:0 48px">
+    <li>Understand Lean Management principles</li>
+    <li>Understand Six Sigma principles</li>
+    <li>Identify Value Added and Non-Value Added activities</li>
+    <li>Identify the Cost of Poor Quality</li>
+    <li>Improve process flow</li>
+    <li>Understand Lean Six Sigma roles</li>
+    <li>Understand the Pull System</li>
+    <li>Use Data Analytics and AI to support decisions</li>
+    <li>Apply Continuous Improvement / Kaizen</li>
+    <li>Apply Lean Six Sigma thinking to real business problems</li>
+  </ul>
+</section>
+
+<!-- 3 -->
+<section class="slide" data-notes="Lean starts by understanding what the customer really needs. Then we look at the process and identify activities that do not create value. After that, we improve the flow, respond to actual demand, and continuously improve the process.">
+  <p class="mod">Module 1: Introduction to Lean</p>
+  <h2>What is Lean?</h2>
+  <div class="row">
+    <div class="col">
+      <p class="eq" style="margin-bottom:22px">Lean = more value with <em>less waste</em></p>
+      <p class="muted" style="margin-bottom:8px">Lean focuses on</p>
+      <ul class="dots"><li>Customer value</li><li>Process efficiency</li><li>Waste reduction</li><li>Continuous improvement</li><li>Employee involvement</li></ul>
+    </div>
+    <div class="col">
+      <h3>The 5 Lean principles</h3>
+      <div style="display:flex;flex-direction:column;gap:10px;margin-top:12px">
+        <div class="box" style="padding:12px 20px"><b>1</b>&nbsp;&nbsp;Value</div>
+        <div class="box" style="padding:12px 20px"><b>2</b>&nbsp;&nbsp;Value Stream</div>
+        <div class="box" style="padding:12px 20px"><b>3</b>&nbsp;&nbsp;Flow</div>
+        <div class="box" style="padding:12px 20px"><b>4</b>&nbsp;&nbsp;Pull</div>
+        <div class="box" style="padding:12px 20px"><b>5</b>&nbsp;&nbsp;Perfection</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 4 -->
+<section class="slide" data-notes="Ask the audience to classify each activity. The point: much of everyday work is waiting, re-entering and fixing, none of which the customer pays for.">
+  <p class="mod">Module 2: Value Added and Non-Value Added</p>
+  <h2>Value Added vs Non-Value Added</h2>
+  <div class="row">
+    <div class="col" style="flex:1.1">
+      <table>
+        <tr><th>Activity</th><th>Value</th></tr>
+        <tr><td>Creating a product / service</td><td class="va">Value Added</td></tr>
+        <tr><td>Processing a customer request</td><td class="va">Value Added</td></tr>
+        <tr><td>Waiting for approval</td><td class="nva">Non-Value Added</td></tr>
+        <tr><td>Re-entering the same data</td><td class="nva">Non-Value Added</td></tr>
+        <tr><td>Fixing defects</td><td class="nva">Non-Value Added</td></tr>
+        <tr><td>Searching for information</td><td class="nva">Non-Value Added</td></tr>
+      </table>
+    </div>
+    <div class="col" style="display:flex;flex-direction:column;gap:14px">
+      <div class="box teal"><span class="tag va">Value Added (VA)</span><p style="font-size:20px;margin-top:6px">Directly creates value for the customer.</p></div>
+      <div class="box amber"><span class="tag nn">Necessary (NNVA)</span><p style="font-size:20px;margin-top:6px">Creates no customer value but may currently be required.</p></div>
+      <div class="box red"><span class="tag pw">Pure Waste</span><p style="font-size:20px;margin-top:6px">Creates no value and should be eliminated.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- 5 -->
+<section class="slide" data-notes="In software development, waiting for approval, manually entering the same data, fixing defects, unnecessary meetings and duplicated processes can all be considered waste.">
+  <p class="mod">Module 2: Value Added and Non-Value Added</p>
+  <h2>The 8 wastes: DOWNTIME</h2>
+  <div class="g4" style="gap:16px">
+    <div class="tile"><div class="letter">D</div><div class="nm">Defects</div></div>
+    <div class="tile"><div class="letter">O</div><div class="nm">Overproduction</div></div>
+    <div class="tile"><div class="letter">W</div><div class="nm">Waiting</div></div>
+    <div class="tile"><div class="letter">N</div><div class="nm">Non-utilized talent</div></div>
+    <div class="tile"><div class="letter">T</div><div class="nm">Transportation</div></div>
+    <div class="tile"><div class="letter">I</div><div class="nm">Inventory</div></div>
+    <div class="tile"><div class="letter">M</div><div class="nm">Motion</div></div>
+    <div class="tile"><div class="letter">E</div><div class="nm">Extra-processing</div></div>
+  </div>
+  <div class="grow"></div>
+  <p class="quote" style="font-size:21px">IT example: waiting for approval, manually entering the same data, fixing defects, unnecessary meetings and duplicated processes.</p>
+</section>
+
+<!-- 6 -->
+<section class="slide" data-notes="The goal is not simply to make people work faster. The goal is to improve the entire process.">
+  <p class="mod">Module 3: Create Flow</p>
+  <h2>What is flow?</h2>
+  <p class="muted" style="margin:-12px 0 18px">Work moves smoothly from one step to the next.</p>
+  <p class="flowlabel">Poor flow</p>
+  <div class="flow" style="margin-bottom:22px">
+    <span class="step">Request</span><span class="arr">&rarr;</span><span class="step wait">Waiting</span><span class="arr">&rarr;</span><span class="step">Approval</span><span class="arr">&rarr;</span><span class="step wait">Waiting</span><span class="arr">&rarr;</span><span class="step">Development</span><span class="arr">&rarr;</span><span class="step wait">Waiting</span><span class="arr">&rarr;</span><span class="step">Testing</span><span class="arr">&rarr;</span><span class="step bad">Rework</span>
+  </div>
+  <p class="flowlabel">Improved flow</p>
+  <div class="flow" style="margin-bottom:26px">
+    <span class="step solid">Request</span><span class="arr">&rarr;</span><span class="step solid">Analysis</span><span class="arr">&rarr;</span><span class="step solid">Development</span><span class="arr">&rarr;</span><span class="step solid">Testing</span><span class="arr">&rarr;</span><span class="step solid">Release</span>
+  </div>
+  <h3>How to improve flow</h3>
+  <div>
+    <span class="chip">Remove unnecessary steps</span><span class="chip">Reduce waiting time</span><span class="chip">Reduce handoffs</span><span class="chip">Standardize processes</span><span class="chip">Automate repetitive work</span><span class="chip">Identify bottlenecks</span>
+  </div>
+</section>
+
+<!-- 7 -->
+<section class="slide" data-notes="Instead of 'We have capacity, so let's build this feature', say 'There is a validated business need, so let's prioritize this feature.'">
+  <p class="mod">Module 4: Establish Pull System</p>
+  <h2>What is pull?</h2>
+  <div class="g2">
+    <div class="box red">
+      <h3>Push</h3>
+      <p style="font-size:21px;margin-bottom:14px">Produce based on forecast or assumption.</p>
+      <div class="flow"><span class="step">Development builds many features</span><span class="arr">&rarr;</span><span class="step wait">Customer may or may not need them</span></div>
+    </div>
+    <div class="box teal">
+      <h3>Pull</h3>
+      <p style="font-size:21px;margin-bottom:14px">Start work based on actual demand.</p>
+      <div class="flow"><span class="step">Business requirement</span><span class="arr">&rarr;</span><span class="step">Prioritize</span><span class="arr">&rarr;</span><span class="step">Develop</span><span class="arr">&rarr;</span><span class="step">Deliver</span></div>
+    </div>
+  </div>
+  <div class="grow"></div>
+  <h3>IT example</h3>
+  <div class="g2" style="gap:24px">
+    <p class="quote" style="border-color:var(--red)">&ldquo;We have capacity, so let&rsquo;s build this feature.&rdquo;</p>
+    <p class="quote">&ldquo;There is a validated business need, so let&rsquo;s prioritize this feature.&rdquo;</p>
+  </div>
+</section>
+
+<!-- 8 -->
+<section class="slide" data-notes="Perfection is not a final destination. It is a continuous improvement mindset.">
+  <p class="mod">Module 5: Strive for Perfection</p>
+  <h2>Continuous improvement</h2>
+  <p class="muted" style="margin:-12px 0 20px">Lean does not mean &ldquo;improve once and stop.&rdquo;</p>
+  <div class="flow" style="margin-bottom:30px">
+    <span class="step solid" style="font-size:26px;padding:14px 24px">Plan</span><span class="arr">&rarr;</span>
+    <span class="step solid" style="font-size:26px;padding:14px 24px">Do</span><span class="arr">&rarr;</span>
+    <span class="step solid" style="font-size:26px;padding:14px 24px">Check</span><span class="arr">&rarr;</span>
+    <span class="step solid" style="font-size:26px;padding:14px 24px">Act</span><span class="arr">&rarr;</span>
+    <span class="step" style="font-size:26px;padding:14px 24px">Repeat</span>
+  </div>
+  <h3>Kaizen: small, continuous improvements</h3>
+  <div style="margin-top:8px">
+    <span class="chip">Automate manual tasks</span><span class="chip">Reduce approval steps</span><span class="chip">Improve documentation</span><span class="chip">Reduce processing time</span><span class="chip">Reduce defects</span><span class="chip">Improve communication</span>
+  </div>
+</section>
+
+<!-- 9 -->
+<section class="slide" data-notes="Lean looks at flow and waste. Six Sigma looks at variation and defects, using data. Together they make the process faster, better and more consistent.">
+  <p class="mod">Module 6: Introduction to Six Sigma</p>
+  <h2>What is Six Sigma?</h2>
+  <p class="lead" style="margin-bottom:28px">Reducing variation and defects, using data.</p>
+  <div class="g2">
+    <div class="box teal"><p class="muted" style="font-size:19px">Lean asks</p><p class="eq" style="font-size:30px">&ldquo;Where is the waste?&rdquo;</p></div>
+    <div class="box amber"><p class="muted" style="font-size:19px">Six Sigma asks</p><p class="eq" style="font-size:30px">&ldquo;Why is the process producing defects or variation?&rdquo;</p></div>
+  </div>
+  <div class="grow"></div>
+  <p class="eq">Lean + Six Sigma = <em>Faster + Better + More Consistent</em></p>
+</section>
+
+<!-- 10 -->
+<section class="slide" data-notes="DMAIC is the backbone of Six Sigma projects. Walk through the example: a 5-day application process, where manual approval causes 2 days of delay.">
+  <p class="mod">Module 6: Introduction to Six Sigma</p>
+  <h2>DMAIC</h2>
+  <div class="g5" style="margin-bottom:26px">
+    <div class="tile"><div class="letter">D</div><div class="nm">Define</div><p style="font-size:18px" class="muted">Define the problem.</p></div>
+    <div class="tile"><div class="letter">M</div><div class="nm">Measure</div><p style="font-size:18px" class="muted">Collect reliable data.</p></div>
+    <div class="tile"><div class="letter">A</div><div class="nm">Analyze</div><p style="font-size:18px" class="muted">Find the root cause.</p></div>
+    <div class="tile"><div class="letter">I</div><div class="nm">Improve</div><p style="font-size:18px" class="muted">Implement solutions.</p></div>
+    <div class="tile"><div class="letter">C</div><div class="nm">Control</div><p style="font-size:18px" class="muted">Make sure the improvement continues.</p></div>
+  </div>
+  <div class="box">
+    <h3>Example: customer application takes 5 days</h3>
+    <div class="g5" style="gap:16px">
+      <p style="font-size:18px"><b>Define</b><br>Processing is too slow.</p>
+      <p style="font-size:18px"><b>Measure</b><br>Average time is 5 days.</p>
+      <p style="font-size:18px"><b>Analyze</b><br>Manual approval causes 2 days of delay.</p>
+      <p style="font-size:18px"><b>Improve</b><br>Automated approval routing.</p>
+      <p style="font-size:18px"><b>Control</b><br>Monitor processing time monthly.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 11 -->
+<section class="slide" data-notes="A system defect causing 100 failed transactions costs far more than the developer's fixing time. Always count support, business operations, customer impact and revenue.">
+  <p class="mod">Module 7: Cost of Poor Quality</p>
+  <h2>What is COPQ?</h2>
+  <p class="lead" style="margin-bottom:22px">Cost of Poor Quality is the cost caused by defects and failures.</p>
+  <div style="margin-bottom:24px">
+    <span class="chip">Rework</span><span class="chip">Customer complaints</span><span class="chip">Refunds</span><span class="chip">Production errors</span><span class="chip">System downtime</span><span class="chip">Repeated testing</span><span class="chip">Support tickets</span><span class="chip">Data correction</span><span class="chip">Lost productivity</span>
+  </div>
+  <div class="box amber">
+    <h3>IT example</h3>
+    <p style="font-size:21px;margin-bottom:12px">A system defect causes 100 customer transactions to fail. The cost is not only the developer&rsquo;s fixing time.</p>
+    <div class="flow"><span class="step">Developer time</span><span class="arr">+</span><span class="step">Support</span><span class="arr">+</span><span class="step">Business operation</span><span class="arr">+</span><span class="step">Customer impact</span><span class="arr">+</span><span class="step">Revenue impact</span></div>
+  </div>
+</section>
+
+<!-- 12 -->
+<section class="slide" data-notes="Roles from top to bottom: leadership direction, methodology expertise, project leadership, project execution, and process knowledge.">
+  <p class="mod">Module 8: Six Sigma Organization</p>
+  <h2>Six Sigma roles</h2>
+  <div class="row" style="align-items:flex-start">
+    <div style="width:420px">
+      <div class="bar" style="width:100%;background:var(--ink)">Executive Leadership</div>
+      <div class="bar" style="width:90%">Champion</div>
+      <div class="bar" style="width:80%">Master Black Belt</div>
+      <div class="bar" style="width:70%">Black Belt</div>
+      <div class="bar" style="width:60%">Green Belt</div>
+      <div class="bar" style="width:50%;background:var(--teal-soft);color:var(--teal)">Yellow Belt</div>
+    </div>
+    <div class="col">
+      <table>
+        <tr><td><b>Champion</b></td><td>Provides business direction and support</td></tr>
+        <tr><td><b>Master Black Belt</b></td><td>Provides methodology expertise</td></tr>
+        <tr><td><b>Black Belt</b></td><td>Leads improvement projects</td></tr>
+        <tr><td><b>Green Belt</b></td><td>Supports and executes projects</td></tr>
+        <tr><td><b>Team members</b></td><td>Provide process knowledge and join improvements</td></tr>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- 13 -->
+<section class="slide" data-notes="Data on its own changes nothing. The value comes when clean data becomes an insight, a decision and then an improvement.">
+  <p class="mod">Module 9: Data Analytics and AI</p>
+  <h2>From data to decision</h2>
+  <div class="flow" style="margin-bottom:34px">
+    <span class="step solid" style="font-size:23px">Data</span><span class="arr">&rarr;</span>
+    <span class="step solid" style="font-size:23px">Clean data</span><span class="arr">&rarr;</span>
+    <span class="step solid" style="font-size:23px">Analysis</span><span class="arr">&rarr;</span>
+    <span class="step solid" style="font-size:23px">Insight</span><span class="arr">&rarr;</span>
+    <span class="step solid" style="font-size:23px">Decision</span><span class="arr">&rarr;</span>
+    <span class="step" style="font-size:23px">Improvement</span>
+  </div>
+  <div class="box">
+    <h3>Example</h3>
+    <div class="flow"><span class="step">System logs</span><span class="arr">&rarr;</span><span class="step">Analyze response time</span><span class="arr">&rarr;</span><span class="step">Identify bottleneck</span><span class="arr">&rarr;</span><span class="step">Optimize database query</span><span class="arr">&rarr;</span><span class="step solid">Faster response</span></div>
+  </div>
+</section>
+
+<!-- 14 -->
+<section class="slide" data-notes="AI may identify a possible root cause, but the business and technical teams still need to validate whether the finding is correct.">
+  <p class="mod">Module 9: Data Analytics and AI</p>
+  <h2>AI in Lean Six Sigma</h2>
+  <p class="muted" style="margin:-12px 0 16px">AI can support</p>
+  <div style="margin-bottom:26px">
+    <span class="chip">Data analysis</span><span class="chip">Pattern detection</span><span class="chip">Anomaly detection</span><span class="chip">Root-cause investigation</span><span class="chip">Prediction</span><span class="chip">Process automation</span><span class="chip">Document analysis</span><span class="chip">Customer feedback analysis</span><span class="chip">Decision support</span>
+  </div>
+  <div class="box amber" style="max-width:980px">
+    <h3>Important principle</h3>
+    <p>AI supports human decision-making; it should not replace business validation.</p>
+    <p class="muted" style="font-size:20px;margin-top:8px">AI may suggest a root cause, but business and technical teams must confirm it is correct.</p>
+  </div>
+</section>
+
+<!-- 15 -->
+<section class="slide" data-notes="Lean Six Sigma 4.0 keeps the same discipline but adds digital data, analytics, AI and automation to the cycle.">
+  <p class="mod">Module 10: Lean Six Sigma 4.0</p>
+  <h2>What is Lean Six Sigma 4.0?</h2>
+  <p class="eq" style="margin-bottom:24px;font-size:30px">Continuous Improvement + Digital Technology + Data + AI</p>
+  <p class="flowlabel">Traditional</p>
+  <div class="flow" style="margin-bottom:18px"><span class="step">Process</span><span class="arr">&rarr;</span><span class="step">Data</span><span class="arr">&rarr;</span><span class="step">Analysis</span><span class="arr">&rarr;</span><span class="step">Improvement</span></div>
+  <p class="flowlabel">Lean Six Sigma 4.0</p>
+  <div class="flow" style="margin-bottom:22px"><span class="step solid">Process</span><span class="arr">&rarr;</span><span class="step solid">Digital data</span><span class="arr">&rarr;</span><span class="step solid">Analytics</span><span class="arr">&rarr;</span><span class="step solid">AI</span><span class="arr">&rarr;</span><span class="step solid">Insight</span><span class="arr">&rarr;</span><span class="step solid">Automation</span><span class="arr">&rarr;</span><span class="step solid">Continuous improvement</span></div>
+  <div>
+    <span class="chip">AI</span><span class="chip">Machine Learning</span><span class="chip">Data Analytics</span><span class="chip">Automation</span><span class="chip">IoT</span><span class="chip">Cloud</span><span class="chip">Process Mining</span><span class="chip">RPA</span><span class="chip">Digital Dashboards</span>
+  </div>
+</section>
+
+<!-- 16 -->
+<section class="slide" data-notes="The same request, handled two ways. The amber steps are waiting and re-work that the automated version removes.">
+  <p class="mod">Module 10: Lean Six Sigma 4.0</p>
+  <h2>Example: digital process improvement</h2>
+  <p class="flowlabel">Before</p>
+  <div class="flow" style="margin-bottom:22px"><span class="step">Customer submits request</span><span class="arr">&rarr;</span><span class="step bad">Manual data entry</span><span class="arr">&rarr;</span><span class="step">Email approval</span><span class="arr">&rarr;</span><span class="step wait">Waiting</span><span class="arr">&rarr;</span><span class="step bad">Manual verification</span><span class="arr">&rarr;</span><span class="step bad">Data re-entry</span><span class="arr">&rarr;</span><span class="step">Processing</span><span class="arr">&rarr;</span><span class="step">Customer notification</span></div>
+  <p class="flowlabel">After</p>
+  <div class="flow" style="margin-bottom:26px"><span class="step solid">Customer submits request</span><span class="arr">&rarr;</span><span class="step solid">Automated validation</span><span class="arr">&rarr;</span><span class="step solid">Workflow routing</span><span class="arr">&rarr;</span><span class="step solid">System processing</span><span class="arr">&rarr;</span><span class="step solid">Automated notification</span><span class="arr">&rarr;</span><span class="step solid">Dashboard monitoring</span></div>
+  <h3>Potential results</h3>
+  <div><span class="chip">Less waiting</span><span class="chip">Less manual work</span><span class="chip">Fewer errors</span><span class="chip">Faster processing</span><span class="chip">Better visibility</span><span class="chip">Better customer experience</span></div>
+</section>
+
+<!-- 17 -->
+<section class="slide" data-notes="Map each classic waste to something the IT team sees every week. Then list the improvements that remove them.">
+  <p class="mod">Module 10: Lean Six Sigma 4.0</p>
+  <h2>Lean Six Sigma in software / IT</h2>
+  <div class="row">
+    <div class="col" style="flex:1.2">
+      <table>
+        <tr><th>Waste</th><th>IT example</th></tr>
+        <tr><td>Waiting</td><td>Waiting for approval</td></tr>
+        <tr><td>Defects</td><td>Production bugs</td></tr>
+        <tr><td>Over-processing</td><td>Duplicate data entry</td></tr>
+        <tr><td>Motion</td><td>Searching multiple systems</td></tr>
+        <tr><td>Handoffs</td><td>Too many teams involved</td></tr>
+        <tr><td>Rework</td><td>Fixing repeated defects</td></tr>
+        <tr><td>Overproduction</td><td>Building unused features</td></tr>
+        <tr><td>Non-utilized talent</td><td>Developer skills not fully used</td></tr>
+      </table>
+    </div>
+    <div class="col">
+      <h3>Improvement examples</h3>
+      <ul class="dots tight" style="margin-top:10px">
+        <li>API automation</li><li>Workflow automation</li><li>CI/CD</li><li>Automated testing</li><li>Monitoring</li><li>Process standardization</li><li>Data dashboards</li><li>AI-assisted analysis</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- 18 -->
+<section class="slide" data-notes="A practical Kaizen project follows these ten steps, from identifying the problem to continuing to improve.">
+  <p class="mod">Module 10: Lean Six Sigma 4.0</p>
+  <h2>Kaizen project approach</h2>
+  <div class="g5" style="gap:14px">
+    <div class="tile"><b style="color:var(--teal)">1</b><p style="font-size:20px">Identify problem</p></div>
+    <div class="tile"><b style="color:var(--teal)">2</b><p style="font-size:20px">Understand current process</p></div>
+    <div class="tile"><b style="color:var(--teal)">3</b><p style="font-size:20px">Identify waste</p></div>
+    <div class="tile"><b style="color:var(--teal)">4</b><p style="font-size:20px">Collect data</p></div>
+    <div class="tile"><b style="color:var(--teal)">5</b><p style="font-size:20px">Find root cause</p></div>
+    <div class="tile"><b style="color:var(--teal)">6</b><p style="font-size:20px">Develop solution</p></div>
+    <div class="tile"><b style="color:var(--teal)">7</b><p style="font-size:20px">Implement improvement</p></div>
+    <div class="tile"><b style="color:var(--teal)">8</b><p style="font-size:20px">Measure results</p></div>
+    <div class="tile"><b style="color:var(--teal)">9</b><p style="font-size:20px">Standardize</p></div>
+    <div class="tile"><b style="color:var(--teal)">10</b><p style="font-size:20px">Continue improving</p></div>
+  </div>
+</section>
+
+<!-- 19 -->
+<section class="slide" data-notes="This is where Lean Six Sigma becomes measurable, rather than just theoretical.">
+  <p class="mod">Module 10: Lean Six Sigma 4.0</p>
+  <h2>Example improvement project</h2>
+  <div class="g2" style="gap:18px 24px">
+    <div class="box"><h3>Problem</h3><p style="font-size:21px">Customer request processing takes too long.</p></div>
+    <div class="box"><h3>Current situation</h3><ul class="dots tight"><li>Average processing time: 5 days</li><li>Manual approval</li><li>Duplicate data entry</li><li>Frequent follow-up emails</li></ul></div>
+    <div class="box red"><h3>Root causes</h3><ul class="dots tight"><li>Manual workflow</li><li>Lack of process visibility</li><li>Multiple handoffs</li><li>No automated validation</li></ul></div>
+    <div class="box teal"><h3>Proposed improvement</h3><ul class="dots tight"><li>Automated workflow</li><li>API integration</li><li>Automated validation</li><li>Dashboard monitoring</li></ul></div>
+  </div>
+  <div class="grow"></div>
+  <p class="eq" style="font-size:32px">Target: <em>5 days &rarr; 2 days</em></p>
+</section>
+
+<!-- 20 -->
+<section class="slide" data-notes="Choose a few KPIs from each group. Always take a baseline measurement before the improvement.">
+  <p class="mod">Module 10: Lean Six Sigma 4.0</p>
+  <h2>Measuring improvement</h2>
+  <div class="g3" style="gap:16px">
+    <div class="box"><h3>Time</h3><ul class="dots tight"><li>Lead time</li><li>Cycle time</li><li>Processing time</li></ul></div>
+    <div class="box"><h3>Quality</h3><ul class="dots tight"><li>Defect rate</li><li>Error rate</li><li>Rework rate</li></ul></div>
+    <div class="box"><h3>Customer</h3><ul class="dots tight"><li>Customer satisfaction</li><li>Complaint rate</li><li>Response time</li></ul></div>
+    <div class="box"><h3>Business</h3><ul class="dots tight"><li>Cost reduction</li><li>Productivity</li><li>Revenue impact</li></ul></div>
+    <div class="box"><h3>Process</h3><ul class="dots tight"><li>Throughput</li><li>Waiting time</li><li>First-time-right %</li></ul></div>
+  </div>
+</section>
+
+<!-- 21 -->
+<section class="slide" data-notes="Shift the audience from 'this is how we have always done it' to 'can we do it better?' and give them seven questions to ask.">
+  <h2>Continuous improvement mindset</h2>
+  <div class="g2" style="margin-bottom:24px">
+    <div class="box red"><p class="muted" style="font-size:19px">Traditional mindset</p><p class="eq" style="font-size:28px">&ldquo;This is how we have always done it.&rdquo;</p></div>
+    <div class="box teal"><p class="muted" style="font-size:19px">Continuous improvement mindset</p><p class="eq" style="font-size:28px">&ldquo;Can we do it better?&rdquo;</p></div>
+  </div>
+  <h3>Ask</h3>
+  <ol class="dots tight" style="list-style:none;columns:2;column-gap:48px;margin-top:6px">
+    <li>What is the problem?</li><li>What is causing it?</li><li>What does the data tell us?</li><li>What waste can we remove?</li><li>Can we automate it?</li><li>How do we measure improvement?</li><li>How do we prevent the problem from coming back?</li>
+  </ol>
+</section>
+
+<!-- 22 -->
+<section class="slide" data-notes="Make this personal: describe how you apply these responsibilities in your own projects.">
+  <h2>My role as a Lean practitioner</h2>
+  <p class="lead" style="margin-bottom:24px">My role is not simply to find problems. It is to understand the process, identify waste, use data to find the root cause, work with stakeholders to improve the process, and make sure the improvement is sustainable.</p>
+  <h3>Key responsibilities</h3>
+  <div style="margin-top:6px"><span class="chip">Understand business processes</span><span class="chip">Identify waste</span><span class="chip">Analyze problems</span><span class="chip">Use data</span><span class="chip">Facilitate improvement</span><span class="chip">Support Kaizen</span><span class="chip">Work with stakeholders</span><span class="chip">Measure results</span><span class="chip">Standardize improvements</span></div>
+</section>
+
+<!-- 23 -->
+<section class="slide" data-notes="Replace this with your own project: one real business problem walked through each step, from current process to the control plan. It connects Lean Six Sigma to your .NET / BA / digital transformation experience.">
+  <h2>Practical case study framework</h2>
+  <p class="muted" style="margin:-12px 0 22px">Connect Lean Six Sigma to a real IT problem.</p>
+  <div class="flow" style="gap:12px 6px;margin-bottom:28px">
+    <span class="step solid">Business problem</span><span class="arr">&rarr;</span><span class="step">Current process</span><span class="arr">&rarr;</span><span class="step">Waste</span><span class="arr">&rarr;</span><span class="step">Data</span><span class="arr">&rarr;</span><span class="step">Root cause</span><span class="arr">&rarr;</span><span class="step">Solution</span><span class="arr">&rarr;</span><span class="step">Automation / AI</span><span class="arr">&rarr;</span><span class="step">KPI</span><span class="arr">&rarr;</span><span class="step solid">Control</span>
+  </div>
+  <div class="box amber" style="max-width:900px"><p style="font-size:21px">Add your own project here: describe the problem, the baseline measurement, the improvement, and the result.</p></div>
+</section>
+
+<!-- 24 -->
+<section class="slide" data-notes="Summarize: Lean removes waste, Six Sigma reduces variation, analytics improves decisions, AI improves analysis and automation, Kaizen keeps it going.">
+  <h2>Key takeaways</h2>
+  <table style="max-width:1050px">
+    <tr><td style="width:260px"><b>Lean</b></td><td>Remove waste</td></tr>
+    <tr><td><b>Six Sigma</b></td><td>Reduce variation and defects</td></tr>
+    <tr><td><b>Data analytics</b></td><td>Make better decisions</td></tr>
+    <tr><td><b>AI</b></td><td>Improve analysis and automation</td></tr>
+    <tr><td><b>Kaizen</b></td><td>Continuously improve</td></tr>
+    <tr><td><b style="color:var(--teal)">Lean Six Sigma 4.0</b></td><td><b>People + Process + Data + Technology + Continuous Improvement</b></td></tr>
+  </table>
+</section>
+
+<!-- 25 -->
+<section class="slide" data-notes="Lean Six Sigma is not just a set of tools. It is a way of thinking.">
+  <div class="grow" style="display:flex;flex-direction:column;justify-content:center">
+    <h1 style="font-size:66px;max-width:1000px">Lean Six Sigma is not just a set of tools. It is a way of thinking.</h1>
+    <div class="flow" style="margin:36px 0 30px"><span class="step solid">Identify</span><span class="arr">&rarr;</span><span class="step solid">Measure</span><span class="arr">&rarr;</span><span class="step solid">Analyze</span><span class="arr">&rarr;</span><span class="step solid">Improve</span><span class="arr">&rarr;</span><span class="step solid">Control</span><span class="arr">&rarr;</span><span class="step">Repeat</span></div>
+    <p class="eq" style="font-size:30px">Better quality + Lower cost + Faster process + <em>Better customer value</em></p>
+  </div>
+</section>
+
+</div></div></div>
+
+<div id="notes" aria-live="polite"></div>
+<div id="bar">
+  <button id="prev" aria-label="Previous slide">Previous</button>
+  <button id="next" aria-label="Next slide">Next</button>
+  <div id="prog"><i></i></div>
+  <span id="count">1 / 1</span>
+  <button id="nt" aria-pressed="false">Speaker notes</button>
+</div>
+
+<script>
+(function(){
+  var slides=[].slice.call(document.querySelectorAll('.slide'));
+  var stage=document.getElementById('stage'), frame=document.getElementById('frame');
+  var vp=document.getElementById('viewport'), bar=document.querySelector('#prog i');
+  var count=document.getElementById('count'), notes=document.getElementById('notes');
+  var cur=0, notesOn=false;
+
+  function fit(){
+    var w=vp.clientWidth-24, h=vp.clientHeight-24;
+    var s=Math.max(0.1,Math.min(w/1280,h/720));
+    stage.style.transform='scale('+s+')';
+    frame.style.width=(1280*s)+'px';
+    frame.style.height=(720*s)+'px';
+  }
+  function show(i){
+    cur=Math.max(0,Math.min(slides.length-1,i));
+    slides.forEach(function(el,k){el.classList.toggle('active',k===cur)});
+    bar.style.width=((cur+1)/slides.length*100)+'%';
+    count.textContent=(cur+1)+' / '+slides.length;
+    notes.innerHTML='<b>Speaker notes:</b> '+(slides[cur].getAttribute('data-notes')||'');
+    try{history.replaceState(null,'','#'+(cur+1))}catch(e){}
+    fit();
+  }
+  document.getElementById('prev').onclick=function(){show(cur-1)};
+  document.getElementById('next').onclick=function(){show(cur+1)};
+  document.getElementById('nt').onclick=function(){
+    notesOn=!notesOn; notes.classList.toggle('on',notesOn);
+    this.setAttribute('aria-pressed',notesOn); fit();
+  };
+  document.addEventListener('keydown',function(e){
+    if(e.key==='ArrowRight'||e.key==='PageDown'||e.key===' '){e.preventDefault();show(cur+1)}
+    else if(e.key==='ArrowLeft'||e.key==='PageUp'){e.preventDefault();show(cur-1)}
+    else if(e.key==='Home'){show(0)} else if(e.key==='End'){show(slides.length-1)}
+  });
+  var x0=null;
+  vp.addEventListener('touchstart',function(e){x0=e.touches[0].clientX},{passive:true});
+  vp.addEventListener('touchend',function(e){
+    if(x0===null)return; var dx=e.changedTouches[0].clientX-x0;
+    if(Math.abs(dx)>50){show(cur+(dx<0?1:-1))} x0=null;
+  });
+  window.addEventListener('resize',fit);
+  var n=parseInt((location.hash||'').slice(1),10);
+  show(isNaN(n)?0:n-1);
+})();
+</script>
+</body>
+</html>
